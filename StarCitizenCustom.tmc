@@ -1,0 +1,153 @@
+include "target.tmh"
+
+//create aliases
+alias left;
+alias right;
+
+//
+//
+//Switch from 0->1 or 1->0 if you need to switch the Right/Left sticks
+
+define switchSticks 0 //no ';' for whatever reason....
+
+//
+// ^Important!!!!
+//	As of target v3.0.16.615 v2 this should no longer be needed.  I will leave this in for older versions of target.
+//
+
+int main(){
+	
+	//Exclude missing devices
+	Configure(&HCougar, MODE_EXCLUDED);
+	Configure(&Joystick, MODE_EXCLUDED);
+	Configure(&Throttle, MODE_EXCLUDED);
+	Configure(&LMFD, MODE_EXCLUDED);
+	Configure(&RMFD, MODE_EXCLUDED);
+	Configure(&TWCSThrottle, MODE_EXCLUDED);
+	Configure(&TFRPRudder, MODE_EXCLUDED);
+	
+	if(Init(&EventHandle)) return 1;
+	
+	//setup keyboard object
+	SetKBRate(32, 50);
+	SetKBLayout(KB_ENG);
+	
+	//set aliases (based ons variable switchSticks on line 19)
+	if(!switchSticks) {
+		&right = &T16000;
+		&left = &T16000L;
+	}
+	else {
+		&right = &T16000L;
+		&left = &T16000;
+	}
+	
+	//DX_Axis
+	
+		//Assignment
+		
+			//MapAxis(&Device, Physical Axis, DirectX Axis, AXIS_Normal/Reversed, MAP_Absolute/Relative)
+			
+			//Right
+			MapAxis(&right, JOYX, DX_X_AXIS, AXIS_NORMAL, MAP_ABSOLUTE); //X-Axis
+			MapAxis(&right, JOYY, DX_Y_AXIS, AXIS_NORMAL, MAP_ABSOLUTE); //Y-Axis
+			MapAxis(&right, RUDDER, DX_Z_AXIS, AXIS_NORMAL, MAP_ABSOLUTE); //Rudder_Twist Axis
+			MapAxis(&right, THR, DX_SLIDER_AXIS, AXIS_REVERSED, MAP_ABSOLUTE); //Throttle Slider
+			
+			//Left
+			MapAxis(&left, JOYX, DX_XROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE); //X-Axis
+			MapAxis(&left, JOYY, DX_YROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE); //Y-Axis
+			MapAxis(&left, RUDDER, DX_ZROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE); //Rudder_Twist Axis
+			MapAxis(&left, THR, DX_THROTTLE_AXIS, AXIS_REVERSED, MAP_ABSOLUTE); //Throttle Slider
+			
+
+		//Deadzone and Sensitivity
+			
+			//SetSCurve(&Device, Physixal Axes, Left Deadzone, Center DeadZone, Right DeadZone, Curve, Scale)
+			
+			//Right
+			SetSCurve(&right, JOYX, 0, 0, 0, 0, 0); //X-Axis
+			SetSCurve(&right, JOYY, 0, 0, 0, 0, 0); //Y-Axis
+			SetSCurve(&right, RUDDER, 0, 0, 0, 0, 0); //Rudder_Twist Axis
+			SetSCurve(&right, THR, 0, 0, 0, 0, 0); //Throttle Slider
+
+			//Left
+			SetSCurve(&left, JOYX, 0, 0, 0, 0, 0); //X-Axis
+			SetSCurve(&left, JOYY, 0, 0, 0, 0, 0); //Y-Axis
+			SetSCurve(&left, RUDDER, 0, 0, 0, 0, 0); //Rudder_Twist Axis
+			SetSCurve(&left, THR, 0, 0, 0, 0, 0); //Throttle Slider
+	
+	
+	//DX_Buttons
+	
+		//Right
+			
+			MapKey(&right, TS1, DX1); //trigger
+		    MapKey(&right, TS2, DX2); //face center
+		    MapKey(&right, TS3, DX3); //face left
+		    MapKey(&right, TS4, DX4); //face right
+		    MapKey(&right, B5, DX5); //base, left side, top row, outer button
+		    MapKey(&right, B6, DX6); //base, left side, top row, middle button
+		    MapKey(&right, B7, DX7); //base, left side, top row, inner button
+		    MapKey(&right, B8, DX8); //base, left side, bottom row, inner button
+		    MapKey(&right, B9, DX9); //base, left side, bottom row, middle button
+		    MapKey(&right, B10, DX10); //base, left side, bottom row, outer button
+		    MapKey(&right, B11, DX11); //base, right side, top row, outer button
+		    //MapKey(&right, B12, DX12); //base, right side, top row, middle button
+		    //MapKey(&right, B13, DX13); //base, right side, top row, inner button
+		    MapKey(&right, B14, DX14); //base, right side, bottom row, inner button
+		    //MapKey(&right, B15, DX15); //base, right side, bottom row, middle button
+		    MapKey(&right, B16, DX16); //base, right side, bottom row, outer button
+		
+		//Left
+			
+			MapKey(&left, TS1, DX17); //trigger
+			
+			//Shift (Left Alt)(Star Citizen defined modifier)
+			MapKey(&left, TS2, DX18); //face center (DX 18 Assigned to Right Hat)
+			
+		    MapKey(&left, TS3, DX19); //face left
+		    MapKey(&left, TS4, DX20); //face right
+		    MapKey(&left, B5, DX21); //base, right side, top row, outer button
+			MapKey(&left, B6, DX22); //base, right side, top row, middle button
+			MapKey(&left, B7, DX23); //base, right side, top row, inner button
+		    MapKey(&left, B8, DX24); //base, right side, bottom row, inner button
+		    MapKey(&left, B9, DX25); //base, right side, bottom row, middle button
+		    MapKey(&left, B10, DX26); //base, right side, bottom row, outer button
+		    MapKey(&left, B11, DX27); //base, left side, top row, outer button
+		    MapKey(&left, B12, DX28); //base, left side, top row, middle button
+		    MapKey(&left, B13, DX29); //base, left side, top row, inner button
+		    
+		    MapKey(&left, B14, DX30);
+		    MapKey(&left, B15, DX31);
+		    MapKey(&left, B16, DX32);
+		    
+			//Mapped to keyboard to free up keys for the Right Stick HAT (also usefull for head tracking or voice attack hot keys)
+			MapKey(&right, B12, R_ALT+KP1); //base, left side, bottom row, inner button (DX30 Assigned to Right Hat)
+		    MapKey(&right, B13, R_ALT+KP3); //base, left side, bottom row, middle button (DX31 Assigned to Right Hat)
+		    MapKey(&right, B15, R_ALT+KP7); //base, left side, bottom row, outer button (DX32 Assigned to Right Hat)
+		
+		//Remap the 8-Way Hats
+			
+			//Right (SC doesn't see DX Hat Diagonal buttons as mappable keys so we have to use regular DX Button Assignments)
+			MapKey(&right, H1U, DXHATUP); //Hat Up
+			MapKey(&right, H1R, DXHATRIGHT); //Hat Right
+			MapKey(&right, H1D, DXHATDOWN); //Had Down
+			MapKey(&right, H1L, DXHATLEFT); //Hat Left
+			
+			//Left	
+			MapKey(&left, H1U, DX30); //Hat Up
+			MapKey(&left, H1R, DX31); //Hat Right
+			MapKey(&left, H1D, L_ALT); //Hat Down
+			MapKey(&left, H1L, DX32); //Hat Left
+			
+		
+}//end main
+
+
+int EventHandle(int type, alias o, int x){
+	
+	
+	DefaultMapping(&o, x);
+
+}
